@@ -77,7 +77,7 @@ bool Adafruit_BNO055::begin(adafruit_bno055_opmode_t mode) {
 #endif
 
   /* Enable I2C */
-  _wire->begin();
+  //_wire->begin();
 
   // BNO055 clock stretches for 500us or more!
 #ifdef ESP8266
@@ -586,7 +586,7 @@ bool Adafruit_BNO055::getEvent(sensors_event_t *event, adafruit_vector_type_t ve
     event->magnetic.y = vec.y();
     event->magnetic.z = vec.z();
   }
-  
+
 
   return true;
 }
