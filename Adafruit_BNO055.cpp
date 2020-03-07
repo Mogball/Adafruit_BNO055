@@ -378,8 +378,7 @@ int8_t Adafruit_BNO055::getTemp() {
  *            VECTOR_GRAVITY]
  *  @return  vector from specified source
  */
-imu::Vector<3> Adafruit_BNO055::getVector(adafruit_vector_type_t vector_type) {
-  imu::Vector<3> xyz;
+void Adafruit_BNO055::getVector(adafruit_vector_type_t vector_type, sensors_vec_t *out) {
   uint8_t buffer[6];
   memset(buffer, 0, 6);
 
@@ -400,43 +399,41 @@ imu::Vector<3> Adafruit_BNO055::getVector(adafruit_vector_type_t vector_type) {
   switch (vector_type) {
   case VECTOR_MAGNETOMETER:
     /* 1uT = 16 LSB */
-    xyz[0] = ((double)x) / 16.0;
-    xyz[1] = ((double)y) / 16.0;
-    xyz[2] = ((double)z) / 16.0;
+    out->x = ((double)x) / 16.0;
+    out->y = ((double)y) / 16.0;
+    out->z = ((double)z) / 16.0;
     break;
   case VECTOR_GYROSCOPE:
     /* 1dps = 16 LSB */
-    xyz[0] = ((double)x) / 16.0;
-    xyz[1] = ((double)y) / 16.0;
-    xyz[2] = ((double)z) / 16.0;
+    out->x = ((double)x) / 16.0;
+    out->y = ((double)y) / 16.0;
+    out->z = ((double)z) / 16.0;
     break;
   case VECTOR_EULER:
     /* 1 degree = 16 LSB */
-    xyz[0] = ((double)x) / 16.0;
-    xyz[1] = ((double)y) / 16.0;
-    xyz[2] = ((double)z) / 16.0;
+    out->x = ((double)x) / 16.0;
+    out->y = ((double)y) / 16.0;
+    out->z = ((double)z) / 16.0;
     break;
   case VECTOR_ACCELEROMETER:
     /* 1m/s^2 = 100 LSB */
-    xyz[0] = ((double)x) / 100.0;
-    xyz[1] = ((double)y) / 100.0;
-    xyz[2] = ((double)z) / 100.0;
+    out->x = ((double)x) / 100.0;
+    out->y = ((double)y) / 100.0;
+    out->z = ((double)z) / 100.0;
     break;
   case VECTOR_LINEARACCEL:
     /* 1m/s^2 = 100 LSB */
-    xyz[0] = ((double)x) / 100.0;
-    xyz[1] = ((double)y) / 100.0;
-    xyz[2] = ((double)z) / 100.0;
+    out->x = ((double)x) / 100.0;
+    out->y = ((double)y) / 100.0;
+    out->z = ((double)z) / 100.0;
     break;
   case VECTOR_GRAVITY:
     /* 1m/s^2 = 100 LSB */
-    xyz[0] = ((double)x) / 100.0;
-    xyz[1] = ((double)y) / 100.0;
-    xyz[2] = ((double)z) / 100.0;
+    out->x = ((double)x) / 100.0;
+    out->y = ((double)y) / 100.0;
+    out->z = ((double)z) / 100.0;
     break;
   }
-
-  return xyz;
 }
 
 /*!
@@ -495,7 +492,7 @@ void Adafruit_BNO055::getSensor(sensor_t *sensor) {
  *          Event description
  *  @return always returns true
  */
-bool Adafruit_BNO055::getEvent(sensors_event_t *event) {
+void Adafruit_BNO055::getOrientation(sensors_vec_t *v) {
   /* Clear the event */
   //memset(event, 0, sizeof(sensors_event_t));
 
@@ -505,12 +502,15 @@ bool Adafruit_BNO055::getEvent(sensors_event_t *event) {
   //event->timestamp = millis();
 
   /* Get a Euler angle sample for orientation */
-  imu::Vector<3> euler = getVector(Adafruit_BNO055::VECTOR_EULER);
-  event->orientation.x = euler.x();
-  event->orientation.y = euler.y();
-  event->orientation.z = euler.z();
+  getVector(Adafruit_BNO055::VECTOR_EULER, v);
+}
 
-  return true;
+void Adafruit_BNO055::getLinearAccel(sensors_vec_t *v) {
+  getVector(VECTOR_LINEARACCEL, v);
+}
+
+void Adafruit_BNO055::getGyroscope(sensors_vec_t *v) {
+  getVector(VECTOR_GYROSCOPE, v);
 }
 
 /*!
@@ -521,7 +521,7 @@ bool Adafruit_BNO055::getEvent(sensors_event_t *event) {
  *          specify the type of reading
  *  @return always returns true
  */
-bool Adafruit_BNO055::getEvent(sensors_event_t *event, adafruit_vector_type_t vec_type)
+bool Adafruit_BNO055::getEvent(sensors_vec_t *v, adafruit_vector_type_t vec_type)
 {
   /* Clear the event */
   //memset(event, 0, sizeof(sensors_event_t));
@@ -531,60 +531,35 @@ bool Adafruit_BNO055::getEvent(sensors_event_t *event, adafruit_vector_type_t ve
   //event->timestamp = millis();
 
   //read the data according to vec_type
-  imu::Vector<3> vec;
   if (vec_type == Adafruit_BNO055::VECTOR_LINEARACCEL)
   {
     //event->type = SENSOR_TYPE_LINEAR_ACCELERATION;
-    vec = getVector(Adafruit_BNO055::VECTOR_LINEARACCEL);
-
-    event->acceleration.x = vec.x();
-    event->acceleration.y = vec.y();
-    event->acceleration.z = vec.z();
+    getVector(Adafruit_BNO055::VECTOR_LINEARACCEL, v);
   }
   else if (vec_type == Adafruit_BNO055::VECTOR_ACCELEROMETER)
   {
     //event->type = SENSOR_TYPE_ACCELEROMETER;
-    vec = getVector(Adafruit_BNO055::VECTOR_ACCELEROMETER);
-
-    event->acceleration.x = vec.x();
-    event->acceleration.y = vec.y();
-    event->acceleration.z = vec.z();
+    getVector(Adafruit_BNO055::VECTOR_ACCELEROMETER, v);
   }
   else if (vec_type == Adafruit_BNO055::VECTOR_GRAVITY)
   {
     //event->type = SENSOR_TYPE_ACCELEROMETER;
-    vec = getVector(Adafruit_BNO055::VECTOR_GRAVITY);
-
-    event->acceleration.x = vec.x();
-    event->acceleration.y = vec.y();
-    event->acceleration.z = vec.z();
+    getVector(Adafruit_BNO055::VECTOR_GRAVITY, v);
   }
   else if (vec_type == Adafruit_BNO055::VECTOR_EULER)
   {
     //event->type = SENSOR_TYPE_ORIENTATION;
-    vec = getVector(Adafruit_BNO055::VECTOR_EULER);
-
-    event->orientation.x = vec.x();
-    event->orientation.y = vec.y();
-    event->orientation.z = vec.z();
+    getVector(Adafruit_BNO055::VECTOR_EULER, v);
   }
   else if (vec_type == Adafruit_BNO055::VECTOR_GYROSCOPE)
   {
     //event->type = SENSOR_TYPE_ROTATION_VECTOR;
-    vec = getVector(Adafruit_BNO055::VECTOR_GYROSCOPE);
-
-    event->gyro.x = vec.x();
-    event->gyro.y = vec.y();
-    event->gyro.z = vec.z();
+    getVector(Adafruit_BNO055::VECTOR_GYROSCOPE, v);
   }
   else if (vec_type == Adafruit_BNO055::VECTOR_MAGNETOMETER)
   {
     //event->type = SENSOR_TYPE_MAGNETIC_FIELD;
-    vec = getVector(Adafruit_BNO055::VECTOR_MAGNETOMETER);
-
-    event->magnetic.x = vec.x();
-    event->magnetic.y = vec.y();
-    event->magnetic.z = vec.z();
+    getVector(Adafruit_BNO055::VECTOR_MAGNETOMETER, v);
   }
 
 

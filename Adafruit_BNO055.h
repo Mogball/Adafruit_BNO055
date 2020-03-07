@@ -61,7 +61,7 @@ typedef struct {
  *  @brief  Class that stores state and functions for interacting with
  *          BNO055 Sensor
  */
-class Adafruit_BNO055 : public Adafruit_Sensor {
+class Adafruit_BNO055 {
 public:
   /** BNO055 Registers **/
   typedef enum {
@@ -294,13 +294,16 @@ public:
   void getCalibration(uint8_t *system, uint8_t *gyro, uint8_t *accel,
                       uint8_t *mag);
 
-  imu::Vector<3> getVector(adafruit_vector_type_t vector_type);
+  void getVector(adafruit_vector_type_t vector_type, sensors_vec_t *out);
   imu::Quaternion getQuat();
   int8_t getTemp();
 
   /* Adafruit_Sensor implementation */
-  bool getEvent(sensors_event_t *);
-  bool getEvent(sensors_event_t *, adafruit_vector_type_t);
+  void getOrientation(sensors_vec_t *);
+  void getLinearAccel(sensors_vec_t *);
+  void getGyroscope(sensors_vec_t *);
+
+  bool getEvent(sensors_vec_t *, adafruit_vector_type_t);
   void getSensor(sensor_t *);
 
   /* Functions to deal with raw calibration data */
