@@ -497,12 +497,12 @@ void Adafruit_BNO055::getSensor(sensor_t *sensor) {
  */
 bool Adafruit_BNO055::getEvent(sensors_event_t *event) {
   /* Clear the event */
-  memset(event, 0, sizeof(sensors_event_t));
+  //memset(event, 0, sizeof(sensors_event_t));
 
-  event->version = sizeof(sensors_event_t);
-  event->sensor_id = _sensorID;
-  event->type = SENSOR_TYPE_ORIENTATION;
-  event->timestamp = millis();
+  //event->version = sizeof(sensors_event_t);
+  //event->sensor_id = _sensorID;
+  //event->type = SENSOR_TYPE_ORIENTATION;
+  //event->timestamp = millis();
 
   /* Get a Euler angle sample for orientation */
   imu::Vector<3> euler = getVector(Adafruit_BNO055::VECTOR_EULER);
@@ -524,17 +524,17 @@ bool Adafruit_BNO055::getEvent(sensors_event_t *event) {
 bool Adafruit_BNO055::getEvent(sensors_event_t *event, adafruit_vector_type_t vec_type)
 {
   /* Clear the event */
-  memset(event, 0, sizeof(sensors_event_t));
+  //memset(event, 0, sizeof(sensors_event_t));
 
-  event->version = sizeof(sensors_event_t);
-  event->sensor_id = _sensorID;
-  event->timestamp = millis();
+  //event->version = sizeof(sensors_event_t);
+  //event->sensor_id = _sensorID;
+  //event->timestamp = millis();
 
   //read the data according to vec_type
   imu::Vector<3> vec;
   if (vec_type == Adafruit_BNO055::VECTOR_LINEARACCEL)
   {
-    event->type = SENSOR_TYPE_LINEAR_ACCELERATION;
+    //event->type = SENSOR_TYPE_LINEAR_ACCELERATION;
     vec = getVector(Adafruit_BNO055::VECTOR_LINEARACCEL);
 
     event->acceleration.x = vec.x();
@@ -543,7 +543,7 @@ bool Adafruit_BNO055::getEvent(sensors_event_t *event, adafruit_vector_type_t ve
   }
   else if (vec_type == Adafruit_BNO055::VECTOR_ACCELEROMETER)
   {
-    event->type = SENSOR_TYPE_ACCELEROMETER;
+    //event->type = SENSOR_TYPE_ACCELEROMETER;
     vec = getVector(Adafruit_BNO055::VECTOR_ACCELEROMETER);
 
     event->acceleration.x = vec.x();
@@ -552,7 +552,7 @@ bool Adafruit_BNO055::getEvent(sensors_event_t *event, adafruit_vector_type_t ve
   }
   else if (vec_type == Adafruit_BNO055::VECTOR_GRAVITY)
   {
-    event->type = SENSOR_TYPE_ACCELEROMETER;
+    //event->type = SENSOR_TYPE_ACCELEROMETER;
     vec = getVector(Adafruit_BNO055::VECTOR_GRAVITY);
 
     event->acceleration.x = vec.x();
@@ -561,7 +561,7 @@ bool Adafruit_BNO055::getEvent(sensors_event_t *event, adafruit_vector_type_t ve
   }
   else if (vec_type == Adafruit_BNO055::VECTOR_EULER)
   {
-    event->type = SENSOR_TYPE_ORIENTATION;
+    //event->type = SENSOR_TYPE_ORIENTATION;
     vec = getVector(Adafruit_BNO055::VECTOR_EULER);
 
     event->orientation.x = vec.x();
@@ -570,7 +570,7 @@ bool Adafruit_BNO055::getEvent(sensors_event_t *event, adafruit_vector_type_t ve
   }
   else if (vec_type == Adafruit_BNO055::VECTOR_GYROSCOPE)
   {
-    event->type = SENSOR_TYPE_ROTATION_VECTOR;
+    //event->type = SENSOR_TYPE_ROTATION_VECTOR;
     vec = getVector(Adafruit_BNO055::VECTOR_GYROSCOPE);
 
     event->gyro.x = vec.x();
@@ -579,7 +579,7 @@ bool Adafruit_BNO055::getEvent(sensors_event_t *event, adafruit_vector_type_t ve
   }
   else if (vec_type == Adafruit_BNO055::VECTOR_MAGNETOMETER)
   {
-    event->type = SENSOR_TYPE_MAGNETIC_FIELD;
+    //event->type = SENSOR_TYPE_MAGNETIC_FIELD;
     vec = getVector(Adafruit_BNO055::VECTOR_MAGNETOMETER);
 
     event->magnetic.x = vec.x();
