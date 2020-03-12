@@ -70,6 +70,10 @@ Adafruit_BNO055::Adafruit_BNO055(int32_t sensorID, uint8_t address,
  *  @return true if process is successful
  */
 bool Adafruit_BNO055::begin(adafruit_bno055_opmode_t mode) {
+#ifdef ESP8266
+  _wire->setClockStretchLimit(1000);
+#endif
+
   uint8_t id = read8(BNO055_CHIP_ID_ADDR);
   if (id != BNO055_ID) {
     delay(1000); // hold on for boot
