@@ -490,21 +490,6 @@ void Adafruit_BNO055::getSensor(sensor_t *sensor) {
  *  @brief  Reads the sensor and returns the data as a sensors_event_t
  *  @param  event
  *          Event description
- *  @return always returns true
- */
-
-void Adafruit_BNO055::getLinearAccel(sensors_vec_t *v) {
-  getVector(VECTOR_LINEARACCEL, v);
-}
-
-void Adafruit_BNO055::getGyroscope(sensors_vec_t *v) {
-  getVector(VECTOR_GYROSCOPE, v);
-}
-
-/*!
- *  @brief  Reads the sensor and returns the data as a sensors_event_t
- *  @param  event
- *          Event description
  *  @param  vec_type
  *          specify the type of reading
  *  @return always returns true
@@ -897,7 +882,7 @@ void Adafruit_BNO055::getRelevantData(triplet *acc, triplet *gyro, triplet *angl
   acc->z = scale(data[24], data[25], acc_scale);
 }
 
-void Adafruit_BNO055::getOrientation(sensors_vec_t *v) {
+void Adafruit_BNO055::getOrientation(triplet *angles) {
   constexpr size_t numBytes = 6;
   static uint8_t data[numBytes];
   _wire->beginTransmission(_address);

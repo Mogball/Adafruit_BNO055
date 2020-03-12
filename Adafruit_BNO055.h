@@ -299,10 +299,6 @@ public:
   int8_t getTemp();
 
   /* Adafruit_Sensor implementation */
-  void getOrientation(sensors_vec_t *);
-  void getLinearAccel(sensors_vec_t *);
-  void getGyroscope(sensors_vec_t *);
-
   bool getEvent(sensors_vec_t *, adafruit_vector_type_t);
   void getSensor(sensor_t *);
 
@@ -318,6 +314,7 @@ public:
   void enterNormalMode();
 
   void getRelevantData(triplet *acc, triplet *gyro, triplet *angles);
+  void getOrientation(triplet *angles);
 
 private:
   byte read8(adafruit_bno055_reg_t);
