@@ -211,6 +211,9 @@ public:
     ACCEL_RADIUS_MSB_ADDR = 0X68,
     MAG_RADIUS_LSB_ADDR = 0X69,
     MAG_RADIUS_MSB_ADDR = 0X6A
+
+    // Page 1 addresses
+    ACC_CONFIG = 0x08
   } adafruit_bno055_reg_t;
 
   /** BNO055 power settings */
