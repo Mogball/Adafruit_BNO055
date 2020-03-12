@@ -884,25 +884,27 @@ inline constexpr float scale(uint8_t lsb, uint8_t msb, float scale) {
 }
 
 void Adafruit_BNO055::getRelevantData(triplet *acc, triplet *gyro, triplet *angles) {
-  static uint8_t data[24u];
+  // Gyro XX YY ZZ, Euler XX YY ZZ, Quat GG GG GG GG, LA XX YY ZZ
+  constexpr size_t numBytes = 3 * 6 + 8;
+  static uint8_t data[numBytes];
   _wire->beginTransmission(_address);
-  _wire->write(static_cast<uint8_t>(BNO055_ACCEL_DATA_X_LSB_ADDR));
+  _wire->write(static_cast<uint8_t>(BNO055_GYRO_DATA_X_LSB_ADDR));
   _wire->endTransmission();
-  _wire->requestFrom(_address, 24u);
-  for (uint8_t i = 0; i < 24u; ++i) {
+  _wire->requestFrom(_address, numBytes);
+  for (uint8_t i = 0; i < numBytes; ++i) {
     data[i] = _wire->read();
   }
-  constexpr float acc_scale = 100.0f;
-  acc->x = scale(data[0], data[1], acc_scale);
-  acc->y = scale(data[2], data[3], acc_scale);
-  acc->z = scale(data[4], data[5], acc_scale);
-  // ignore magnetometer data[6, 7, 8, 9, 10, 11]
   constexpr float gyro_scale = 16.0f;
-  gyro->x = scale(data[12], data[13], gyro_scale);
-  gyro->y = scale(data[14], data[15], gyro_scale);
-  gyro->z = scale(data[16], data[17], gyro_scale);
+  gyro->x = scale(data[0], data[1], gyro_scale);
+  gyro->y = scale(data[2], data[3], gyro_scale);
+  gyro->z = scale(data[4], data[5], gyro_scale);
   constexpr float euler_scale = 16.0f;
-  angles->x = scale(data[18], data[19], euler_scale);
-  angles->y = scale(data[20], data[21], euler_scale);
-  angles->z = scale(data[22], data[23], euler_scale);
+  angles->x = scale(data[6], data[7], euler_scale);
+  angles->y = scale(data[8], data[9], euler_scale);
+  angles->z = scale(data[10], data[11], euler_scale);
+  // ignore quarternion data[12-20]
+  constexpr float acc_scale = 100.0f;
+  acc->x = scale(data[20], data[21], acc_scale);
+  acc->y = scale(data[22], data[23], acc_scale);
+  acc->z = scale(data[24], data[25], acc_scale);
 }
