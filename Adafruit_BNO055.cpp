@@ -492,18 +492,6 @@ void Adafruit_BNO055::getSensor(sensor_t *sensor) {
  *          Event description
  *  @return always returns true
  */
-void Adafruit_BNO055::getOrientation(sensors_vec_t *v) {
-  /* Clear the event */
-  //memset(event, 0, sizeof(sensors_event_t));
-
-  //event->version = sizeof(sensors_event_t);
-  //event->sensor_id = _sensorID;
-  //event->type = SENSOR_TYPE_ORIENTATION;
-  //event->timestamp = millis();
-
-  /* Get a Euler angle sample for orientation */
-  getVector(Adafruit_BNO055::VECTOR_EULER, v);
-}
 
 void Adafruit_BNO055::getLinearAccel(sensors_vec_t *v) {
   getVector(VECTOR_LINEARACCEL, v);
@@ -907,4 +895,20 @@ void Adafruit_BNO055::getRelevantData(triplet *acc, triplet *gyro, triplet *angl
   acc->x = scale(data[20], data[21], acc_scale);
   acc->y = scale(data[22], data[23], acc_scale);
   acc->z = scale(data[24], data[25], acc_scale);
+}
+
+void Adafruit_BNO055::getOrientation(sensors_vec_t *v) {
+  constexpr size_t numBytes = 6;
+  static uint8_t data[numBytes];
+  _wire->beginTransmission(_address);
+  _wire->write(static_cast<uint8_t>(BNO055_EULER_H_LSB_ADDR));
+  _wire->endTransmission();
+  _wire->requestFrom(_address, numBytes);
+  for (uint8_t i = 0; i < numBytes; ++i) {
+    data[i] = _wire->read();
+  }
+  constexpr float euler_scale = 16.0f;
+  angles->x = scale(data[0], data[1], euler_scale);
+  angles->y = scale(data[2], data[3], euler_scale);
+  angles->z = scale(data[4], data[5], euler_scale);
 }
